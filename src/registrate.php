@@ -26,7 +26,6 @@
 </form>
 
 <style>
-
     * {box-sizing: border-box}
 
     /* Add padding to containers */
@@ -81,5 +80,4 @@
         background-color: #f1f1f1;
         text-align: center;
     }
-
 </style>
