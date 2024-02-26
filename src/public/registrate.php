@@ -5,15 +5,20 @@
         <hr>
 
         <label for="name"><b>Name</b></label>
+        <label><?php echo $errors['name'] ?? '' ?></label>
         <input type="text" placeholder="Enter Name" name="name" id="name" required>
 
         <label for="email"><b>Email</b></label>
+        <label><?php echo $errors['email'] ?? '' ?></label>
         <input type="text" placeholder="Enter Email" name="email" id="email" required>
 
         <label for="psw"><b>Password</b></label>
+        <label><?php echo $errors['pws'] ?? '' ?></label>
         <input type="password" placeholder="Enter Password" name="psw" id="psw" required>
 
-        <label for="psw-repeat"><b>Repeat Password</b></label><input type="password" placeholder="Repeat Password" name="psw-repeat" id="psw-repeat" required>
+        <label for="psw-repeat"><b>Repeat Password</b></label>
+        <label><?php echo $errors['pws-repeat'] ?? '' ?></label>
+        <input type="password" placeholder="Repeat Password" name="psw-repeat" id="psw-repeat" required>
         <hr>
 
         <p>By creating an account you agree to our <a href="#">Terms & Privacy</a>.</p>
@@ -24,6 +29,8 @@
         <p>Already have an account? <a href="#">Sign in</a>.</p>
     </div>
 </form>
+
+
 
 <style>
     * {box-sizing: border-box}
