@@ -57,12 +57,8 @@ if(empty($errors)) {
     $stmt->execute(['email' => $email]);
     $user = $stmt->fetch();
 
-
-
     if(!$user) {
         $errors['email'] = 'Email or password incorrect';
-        require_once 'login.php';
-        die();
     } else {
         if(password_verify($password, $user['password'])) {
             session_start();
