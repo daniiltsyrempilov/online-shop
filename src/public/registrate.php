@@ -13,11 +13,11 @@
         <input type="text" placeholder="Enter Email" name="email" id="email" required>
 
         <label for="psw"><b>Password</b></label>
-        <label><?php echo $errors['pws'] ?? '' ?></label>
+        <label><?php echo $errors['psw'] ?? '' ?></label>
         <input type="password" placeholder="Enter Password" name="psw" id="psw" required>
 
         <label for="psw-repeat"><b>Repeat Password</b></label>
-        <label><?php echo $errors['pws-repeat'] ?? '' ?></label>
+        <label><?php echo $errors['psw-repeat'] ?? '' ?></label>
         <input type="password" placeholder="Repeat Password" name="psw-repeat" id="psw-repeat" required>
         <hr>
 

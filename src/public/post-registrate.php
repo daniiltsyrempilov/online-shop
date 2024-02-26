@@ -17,16 +17,16 @@ function ValidateUser(array $val): array {
         $errors['email'] = 'Email must be fill';
     }
 
-    if(isset($val['pws'])) {
-        $password = $val['pws'];
+    if(isset($val['psw'])) {
+        $password = $val['psw'];
     } else {
-        $errors['pws'] = 'Password must be fill';
+        $errors['psw'] = 'Password must be fill';
     }
 
-    if(isset($val['pws-repeat'])) {
-        $passwordRep = $val['pws-repeat'];
+    if(isset($val['psw-repeat'])) {
+        $passwordRep = $val['psw-repeat'];
     } else {
-        $errors['pws-repeat'] = 'Password-repeat must be fill';
+        $errors['psw-repeat'] = 'Password-repeat must be fill';
     }
 
     if(empty($name)) {
@@ -52,11 +52,11 @@ function ValidateUser(array $val): array {
     }
 
     if(empty($password)) {
-        $errors['pws'] = 'Password not be empty';
+        $errors['psw'] = 'Password not be empty';
     } elseif(strlen($password) < 5) {
-        $errors['pws'] = 'The password must have more than 5 characters';
+        $errors['psw'] = 'The password must have more than 5 characters';
     } elseif($password !== $passwordRep) {
-        $errors['pws-repeat'] = 'Password does not match';
+        $errors['psw-repeat'] = 'Password does not match';
     }
     return $errors;
 }
@@ -68,12 +68,12 @@ if (empty($errors)) {
 
     $name = $_POST['name'];
     $email = $_POST['email'];
-    $password = password_hash($_POST['pws'], PASSWORD_DEFAULT);
+    $password = password_hash($_POST['psw'], PASSWORD_DEFAULT);
 
     $stmt = $pdo->prepare("INSERT INTO users (name, email, password) VALUES (:name, :email, :password)");
     $stmt->execute(['name' => $name, 'email' => $email, 'password' => $password]);
 
-    $stmt = $pdo->prepare("SELECT FROM users WHERE email = :email");
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE email = :email");
     $stmt->execute(['email' => $email]);
 
     $result = $stmt->fetch();

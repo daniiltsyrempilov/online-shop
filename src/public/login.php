@@ -10,6 +10,7 @@
 <div class="card">
     <h2>Login Form</h2>
 
+
     <!-- SE CONNECTER / S'INSCRIRE -->
     <div class="login_register">
         <a href="
@@ -22,8 +23,12 @@ https://codepen.io/pen?template=VwRgKYB
 
     <!-- FORMULAIRE -->
     <form class="form" action="post-login.php" method="POST">
-        <input name="name" type="email" placeholder="Email Adress" class="email">
+        <input name="email" type="email" placeholder="Email Adress" class="email">
+        <p><?php echo $errors['email'] ?? '' ?></p>
         <input name="password" type="password" placeholder="password" class="pass">
+
+        <p><?php echo $errors['password'] ?? '' ?></p>
+
         <button type="submit" class="login_btn">Login</button>
     </form>
 </div>
