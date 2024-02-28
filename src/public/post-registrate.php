@@ -95,6 +95,9 @@ if ($flag == false) {
 
     $user = $stmt->fetch();
 
+    if($user) {
+        header("Location: /login.php");
+    }
     #print_r($result);
 }
 

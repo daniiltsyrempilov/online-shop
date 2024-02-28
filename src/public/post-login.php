@@ -1,7 +1,5 @@
 <?php
 
-$val = $_POST;
-
 function ValidateLog(array $val): array {
     $errors = [];
 
@@ -45,6 +43,7 @@ function ValidateLog(array $val): array {
     return $errors;
 }
 
+$val = $_POST;
 $errors = ValidateLog($val);
 
 if(empty($errors)) {
