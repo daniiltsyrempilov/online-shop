@@ -2,103 +2,84 @@
 
 $val = $_POST;
 
-function ValidateUser(array $val): array {
+function validate(array $data): array
+{
     $errors = [];
 
-    if(isset($val['name'])) {
-        $name = $val['name'];
-        if(empty($name)) {
-            $errors['name'] = 'Name not be empty';
-        } elseif(strlen($name) < 2) {
-            $errors['name'] = 'The name must have more than 2 characters';
+    if (isset($data['name'])) {
+        $name = $data['name'];
+
+        if (strlen($name) < 2) {
+            $errors['name'] = 'Имя должен составлять не меньше 2 символов';
         }
     } else {
-        $errors['name'] = 'Name must be fill';
+        $errors['name'] = 'Заполните поле name';
     }
 
-    if(isset($val['email'])) {
-        $email = $val['email'];
+    if (isset($data['email'])) {
+        $email = $data['email'];
 
-        if(empty($email)) {
-            $errors['email'] = 'Email not be empty';
-        } elseif(strlen($email) < 2) {
-            $errors['email'] = 'The email must have more than 2 characters';
+        if (strlen($email) < 2) {
+            $errors['email'] = 'Почта должен составлять не меньше 2 символов';
         } else {
-            $res = '';
-            for($i = 0; $i < strlen($email); $i++) {
-                if($email[$i] === '@') {
-                    $res = $res.$email[$i];
+            $str = '@';
+            $pos = strpos($email, $str);
+            if ($pos === false) {
+                $errors['email'] = 'Почта должен иметь символ @ в строке';
+            } elseif (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+
+                $pdo = new PDO("pgsql:host=postgres;port=5432;dbname=laravel", 'root', 'root');
+                $statement = $pdo->prepare("SELECT * FROM users WHERE email = :email");
+                $statement->execute(['email' => $email]);
+                $result = $statement->fetch();
+
+                if (!empty($result)) {
+                    $errors['email'] = 'Пользователь с таким email уже сущетсвует';
                 }
             }
-            if(strlen($res) !== 1) {
-                $errors['email'] = 'Email is wrong';
-            }
         }
     } else {
-        $errors['email'] = 'Email must be fill';
+        $errors['email'] = 'Заполните поле email';
     }
 
-    if(isset($val['psw'])) {
-        $password = $val['psw'];
+
+
+    if (isset($data['psw'])) {
+        $password = $data['psw'];
+
+        if (strlen($password) < 2) {
+            $errors['password'] = 'Паролль должен составлять не меньше 2 символов';
+        }
     } else {
-        $errors['psw'] = 'Password must be fill';
+        $errors['password'] = 'Заполните поле password';
     }
 
-    if(isset($val['psw-repeat'])) {
-        $passwordRep = $val['psw-repeat'];
+    if (isset($data['psw-repeat'])) {
+        $password_repeat = $data['psw-repeat'];
+
+        if ($password !== $password_repeat) {
+            $errors['psw-repeat'] = 'Пароли не совпадают';
+        }
     } else {
-        $errors['psw-repeat'] = 'Password-repeat must be fill';
+        $errors['psw-repeat'] = 'Заполните поле password-repeat';
     }
-
-    if(empty($password)) {
-        $errors['psw'] = 'Password not be empty';
-    } elseif(strlen($password) < 5) {
-        $errors['psw'] = 'The password must have more than 5 characters';
-    } elseif($password !== $passwordRep) {
-        $errors['psw-repeat'] = 'Password does not match';
-    }
-
     return $errors;
 }
 
-$errors = ValidateUser($val);
+$errors = validate($_POST);
 
-if(empty($errors)) {
-    $pdo = new PDO("pgsql:host=postgres; port=5432; dbname=laravel", "root", "root");
-
-    $email = $_POST['email'];
-
-    $stmt = $pdo->prepare("SELECT * FROM users WHERE email = :email");
-    $stmt->execute(['email' => $email]);
-
-    $user = $stmt->fetch();
-
-    if($user) {
-        $errors['email'] = 'A user with such an email exists';
-        $flag = true;
-    }
-
-}
-
-if ($flag == false) {
-    $pdo = new PDO("pgsql:host=postgres; port=5432; dbname=laravel", "root", "root");
-
+if (empty($errors)) {
     $name = $_POST['name'];
     $email = $_POST['email'];
-    $password = password_hash($_POST['psw'], PASSWORD_DEFAULT);
+    $password = $_POST['psw'];
 
-    $stmt = $pdo->prepare("INSERT INTO users (name, email, password) VALUES (:name, :email, :password)");
-    $stmt->execute(['name' => $name, 'email' => $email, 'password' => $password]);
+    $password = password_hash($password, PASSWORD_DEFAULT);
 
-    $stmt = $pdo->prepare("SELECT * FROM users WHERE email = :email");
-    $stmt->execute(['email' => $email]);
+    $pdo = new PDO("pgsql:host=postgres;port=5432;dbname=laravel", 'root', 'root');
+    $statement = $pdo->prepare("INSERT INTO users(name, email, password) VALUES (:name, :email, :password)");
+    $statement->execute(['name' => $name, 'email' => $email, 'password' => $password]);
 
-    $user = $stmt->fetch();
-
-    if($user) {
-        header("Location: /login.php");
-    }
-    #print_r($result);
+    header("Location: /login.php");
 }
 
 require_once './registrate.php';

@@ -43,8 +43,7 @@ function ValidateLog(array $val): array {
     return $errors;
 }
 
-$val = $_POST;
-$errors = ValidateLog($val);
+$errors = ValidateLog($_POST);
 
 if(empty($errors)) {
     $pdo = new PDO("pgsql:host=postgres; port=5432; dbname=laravel", "root", "root");
