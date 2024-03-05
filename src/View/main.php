@@ -1,21 +1,3 @@
-<?php
-
-session_start();
-if (!isset($_SESSION['user_id'])) {
-    header('Location: /login.php');
-}
-
-$pdo = new PDO("pgsql:host=postgres; port=5432; dbname=laravel", "root", "root");
-
-$stmt = $pdo->query("SELECT * FROM products");
-$products = $stmt->fetchAll();
-
-if(empty($products)) {
-    echo 'There are no products';
-    die;
-}
-?>
-
 <div class="container">
   <h3>Catalog</h3>
   <div class="card-deck">

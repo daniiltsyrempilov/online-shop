@@ -22,7 +22,7 @@ https://codepen.io/pen?template=VwRgKYB
     </div>
 
     <!-- FORMULAIRE -->
-    <form class="form" action="post-login.php" method="POST">
+    <form class="form" action="login" method="POST">
         <input name="email" type="email" placeholder="Email Adress" class="email">
         <p><?php echo $errors['email'] ?? '' ?></p>
         <input name="password" type="password" placeholder="password" class="pass">
