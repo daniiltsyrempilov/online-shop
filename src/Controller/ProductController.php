@@ -36,23 +36,28 @@ class ProductController
 
     public function postAddProduct()
     {
+        session_start();
         $errors = $this->validate($_POST);
 
         if (empty($errors)) {
             $productId = $_POST['product_id'];
             $quantity = $_POST['quantity'];
-
-            session_start();
             $userId = $_SESSION['user_id'];
-            if (!isset($_SESSION['user_id'])) {
-                header("Location: /login");
+
+            $userProdModel = new Product();
+
+            if($userProdModel->getOneByUserIdProductId($userId,$productId)) {
+                $userProdModel->updateQuantity($userId, $productId, $quantity);
             } else {
-                require_once './../Model/Product.php';
-                $userProdModel = new Product();
-                $userProdModel->setUserProdDAta($_POST, $_SESSION['user_id']);
+                $userProdModel->setUserProdDAta($_POST, $userId);
             }
+
+            $notification  = "Товар успешно добавлен в количестве $quantity шт";
+
         }
 
-        require_once './../View/add-product.php';
+        $prodModel = new Product();
+        $products = $prodModel->getAll();
+        require_once './../View/main.php';
     }
 }
