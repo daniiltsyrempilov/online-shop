@@ -5,7 +5,7 @@
 
     <title>Покупка товаров</title>
 </head>
-<form action="add-product" method="POST">
+<form action="main" method="POST">
     <div class="container">
         <!--        <h1>Регистрация</h1>-->
         <p>Пожалуйста, заполните эту форму, чтобы совершить покупку.</p>

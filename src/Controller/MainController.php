@@ -2,6 +2,12 @@
 
 class MainController
 {
+    private Product $prodModel;
+
+    public function __construct()
+    {
+        $this->prodModel = new Product();
+    }
     public function getMain()
     {
         session_start();
@@ -10,8 +16,7 @@ class MainController
             header('Location: /login');
         }
 
-        $prodModel = new Product();
-        $products = $prodModel->getAll();
+        $products = $this->prodModel->getAll();
 
         require_once './../View/main.php';
     }

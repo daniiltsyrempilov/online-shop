@@ -2,6 +2,46 @@
 
 class ProductController
 {
+    private UserProduct $userProdModel;
+    private Product $productModel;
+
+    public function __construct()
+    {
+        $this->userProdModel = new UserProduct();
+        $this->productModel = new Product();
+    }
+
+    public function getAddProduct()
+    {
+        require_once './../View/add-product.php';
+    }
+
+    public function postAddProduct()
+    {
+        session_start();
+        if (!isset($_SESSION['user_id']))
+        {
+            header('Location: /login');
+        }
+        $errors = $this->validate($_POST);
+
+        $amount = $this->amount($_SESSION['user_id']);
+
+        if (empty($errors)) {
+            $productId = $_POST['product_id'];
+            $quantity = $_POST['quantity'];
+            $userId = $_SESSION['user_id'];
+
+            if(empty($this->userProdModel->getOneByUserIdProductId($userId,$productId))) {
+                $this->userProdModel->create($userId, $productId, $quantity);
+            } else {
+                $this->userProdModel->updateQuantity($userId, $productId, $quantity);
+            }
+        }
+
+        header('Location: /main');
+    }
+
     private function validate(array $data): array
     {
         $errors = [];
@@ -29,35 +69,22 @@ class ProductController
         return $errors;
     }
 
-    public function getAddProduct()
+    public function amount($userId): array
     {
-        require_once './../View/add-product.php';
-    }
+        $products = $this->productModel->getAll();
+        $userProducts = $this->userProdModel->getAllByUserId($userId);
 
-    public function postAddProduct()
-    {
-        session_start();
-        $errors = $this->validate($_POST);
 
-        if (empty($errors)) {
-            $productId = $_POST['product_id'];
-            $quantity = $_POST['quantity'];
-            $userId = $_SESSION['user_id'];
+        foreach ($userProducts as $userProduct) {
+            $productOfCart = [];
 
-            $userProdModel = new Product();
-
-            if($userProdModel->getOneByUserIdProductId($userId,$productId)) {
-                $userProdModel->updateQuantity($userId, $productId, $quantity);
-            } else {
-                $userProdModel->setUserProdDAta($_POST, $userId);
+            foreach ($products as $product) {
+                if ($product['id'] === $userProduct['product_id']) {
+                    $productOfCart['quantity'] = $userProduct['quantity'];
+                }
             }
-
-            $notification  = "Товар успешно добавлен в количестве $quantity шт";
-
+            $cart[] = $productOfCart;
         }
-
-        $prodModel = new Product();
-        $products = $prodModel->getAll();
-        require_once './../View/main.php';
+        return $cart;
     }
 }

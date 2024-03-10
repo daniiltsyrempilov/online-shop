@@ -2,6 +2,31 @@
 
 class UserController
 {
+    private User $userModel;
+
+    public function __construct()
+    {
+        $this->userModel = new User();
+    }
+    public function getRegistrate(): void
+    {
+        require_once './../View/registrate.php';
+    }
+
+    public function postRegistrate(): void
+    {
+        $errors = $this->validateReg($_POST);
+
+        if (empty($errors)) {
+            require_once './../Model/User.php';
+            $this->userModel->setData($_POST);
+
+            header('Location: /login');
+        }
+
+        require_once './../View/registrate.php';
+    }
+
     private function validateReg(array $data): array
     {
         $errors = [];
@@ -63,6 +88,37 @@ class UserController
         return $errors;
     }
 
+    public function getLogin(): void
+    {
+        require_once './../View/login.php';
+    }
+
+    public function postLogin(): void
+    {
+        $errors = $this->validateLog($_POST);
+
+        if(empty($errors)) {
+            require_once './../Model/User.php';
+            $user = $this->userModel->getOneByEmail($_POST);
+
+            $password = $_POST['password'];
+
+            if(empty($user)) {
+                $errors['email'] = 'Email or password incorrect';
+            } else {
+                if(password_verify($password, $user['password'])) {
+                    session_start();
+                    $_SESSION['user_id'] = $user['id'];
+                    header('Location: /main');
+                } else {
+                    $errors['password'] = 'Email or password incorrect';
+                }
+            }
+        }
+
+        require_once './../View/login.php';
+    }
+
     private function validateLog(array $val): array
     {
         $errors = [];
@@ -106,59 +162,4 @@ class UserController
 
         return $errors;
     }
-
-    public function getRegistrate(): void
-    {
-        require_once './../View/registrate.php';
-    }
-
-    public function postRegistrate(): void
-    {
-        $errors = $this->validateReg($_POST);
-
-        if (empty($errors)) {
-            require_once './../Model/User.php';
-            $userModel = new User();
-            $userModel->setData($_POST);
-
-            header('Location: /login');
-        }
-
-        require_once './../View/registrate.php';
-    }
-
-
-
-    public function getLogin(): void
-    {
-        require_once './../View/login.php';
-    }
-
-    public function postLogin(): void
-    {
-        $errors = $this->validateLog($_POST);
-
-        if(empty($errors)) {
-            require_once './../Model/User.php';
-            $userModel = new User();
-            $user = $userModel->getOneByEmail($_POST);
-
-            $password = $_POST['password'];
-
-            if(empty($user)) {
-                $errors['email'] = 'Email or password incorrect';
-            } else {
-                if(password_verify($password, $user['password'])) {
-                    session_start();
-                    $_SESSION['user_id'] = $user['id'];
-                    header('Location: /main');
-                } else {
-                    $errors['password'] = 'Email or password incorrect';
-                }
-            }
-        }
-
-        require_once './../View/login.php';
-    }
-
 }

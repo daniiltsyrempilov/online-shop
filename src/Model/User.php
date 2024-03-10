@@ -1,12 +1,9 @@
 <?php
-require_once 'Model.php';
 
 class User extends Model
 {
     public function setData(array $post): bool
     {
-
-
         $name = $post['name'];
         $email = $post['email'];
 
@@ -18,8 +15,6 @@ class User extends Model
 
     public function getOneByEmail(array $val): mixed
     {
-
-
         $email = $val['email'];
 
         $statement = $this->pdo->prepare("SELECT * FROM users WHERE email = :email");

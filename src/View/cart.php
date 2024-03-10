@@ -5,38 +5,50 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Каталог товаров</title>
+    <title>Корзина</title>
 </head>
 
 <body>
-<h2>Каталог товаров</h2>
+<h2>Корзина</h2>
 <ul class="catalog">
 
-    <?php foreach ($products as $product): ?>
-    <form action = "main" method = "post">
+    <?php foreach ($cart as $product): ?>
         <li class="catalog-item">
-            <h3><?php echo $product['name'] ?></h3>
+            <p><?php echo $product['name'] ?></p>
             <img src="<?php echo $product['img_url'] ?>" alt="Изображение товара">
-            <p class="price"><?php echo $product['price'] ?> руб</p>
-            <p><?php echo $product['description'] ?></p>
-            <input type="hidden" placeholder="Введите id товара" name="product_id" id="product_id" required value = "<?php echo $product['id'] ?>">
-            <label for="psw"><b>Количество</b></label>
-
-            <input type="text" placeholder="Введите количество" name="quantity" id="quantity" required>
-            <button type="submit" class="registerbtn">Добавить в корзину</button>
+            <!--                <p class="price">Цена за шт: --><?php //echo $product['price'] ?><!-- руб</p>-->
+            <p class="price">Количество: <?php echo $product['quantity'] ?> шт</p>
+            <p class="price">Цена: <?php echo $product['sum'] ?> руб</p>
         </li>
-    </form>
-    <?php endforeach; ?>
-    <form action="cart" method="get">
-        <?php echo 'tete' ?>
-    <button type="submit" class="btn">Корзина</button>
 
-        <form>
+    <?php endforeach; ?>
+
 </ul>
+<p class="price"><?php echo $notification ?? ""; ?></p>
+<p class="price">Итоговая сумма заказа: <?php echo $totalPrice; ?> руб</p>
+
+<button type="submit" class="registerbtn">Купить</button>
+
+<p style="color: black"><?php echo $errors['quantity'] ?? $notification ?? '';?></p>
+
+<form action="/main" method="post">
+
+    <button type="submit" class="btn">Каталог товаров</button>
+    <form>
 </body>
 
 </html>
 <style>
+    .btn {
+        position:relative;
+        right:1px;
+        left:0px;
+        top:-340px;
+        bottom:10px;
+        height:70px;
+        width:110px;
+    }
+
     body {
         font: 16px/1.5 sans-serif;
     }
@@ -45,16 +57,6 @@
         padding: 0 5px;
 
         text-align: center;
-    }
-
-    .btn {
-        position:relative;
-        right:100px;
-        left:390px;
-        top:-50px;
-        bottom:10px;
-        height:70px;
-        width:110px;
     }
 
     .catalog {
