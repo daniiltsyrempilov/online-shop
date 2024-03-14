@@ -10,6 +10,9 @@
 
 <body>
 <h2>Каталог товаров</h2>
+<form action = "/logout" method = "get">
+    <button type = "submit">LOGOUT</button>
+</form>
 <ul class="catalog">
 
     <?php foreach ($products as $product): ?>
@@ -19,24 +22,42 @@
             <img src="<?php echo $product['img_url'] ?>" alt="Изображение товара">
             <p class="price"><?php echo $product['price'] ?> руб</p>
             <p><?php echo $product['description'] ?></p>
-            <input type="hidden" placeholder="Введите id товара" name="product_id" id="product_id" required value = "<?php echo $product['id'] ?>">
-            <label for="psw"><b>Количество</b></label>
 
-            <input type="text" placeholder="Введите количество" name="quantity" id="quantity" required>
-            <button type="submit" class="registerbtn">Добавить в корзину</button>
+            <input type="hidden" name="product_id" id="product_id" required value = "<?php echo $product['id'] ?>">
+            <input type="hidden" name="quantity" id="quantity" required value=1>
+            <button type="submit" class="registerbtn">+</button>
+                </form>
+
+            <form action="/rm-product" method="post">
+            <input type="hidden" name="product_id" id="product_id" required value = "<?php echo $product['id'] ?>">
+            <input type="hidden" name="quantity" id="quantity" required value=1>
+            <button type="submit" class="registerbtn">-</button>
+                <form>
+
         </li>
     </form>
     <?php endforeach; ?>
-    <form action="cart" method="get">
-        <?php echo 'tete' ?>
-    <button type="submit" class="btn">Корзина</button>
-
-        <form>
+    <a href="/cart" class="button-cart">Корзина (<?php echo $quantityProducts; ?>)</a>
 </ul>
 </body>
 
 </html>
+
+
 <style>
+    @import url(https://fonts.googleapis.com/css?family=Oswald:400);
+
+    .button-cart {
+        background-color: #04AA6D; /* Green */
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+    }
+
     body {
         font: 16px/1.5 sans-serif;
     }

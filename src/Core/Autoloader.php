@@ -1,12 +1,14 @@
 <?php
 
+namespace Core;
 class Autoloader
 {
-    public function registrate()
+    public static function registrate(string $directory): void
     {
-        $autoloadController = function (string $className): bool {
-            $path = "./../Controller/$className.php";
-            if (file_exists($path)) {
+        $autoloader = function (string $className) use ($directory){
+            $path = str_replace('\\',DIRECTORY_SEPARATOR,$className);
+            $path = $directory . '/' . $path . '.php';
+            if (file_exists($path)){
                 require_once $path;
                 return true;
             } else {
@@ -14,28 +16,7 @@ class Autoloader
             }
         };
 
-        $autoloadModel = function (string $className): bool {
-            $path = "./../Model/$className.php";
-            if (file_exists($path)) {
-                require_once $path;
-                return true;
-            } else {
-                return false;
-            }
-        };
-
-        $autoloadCore = function (string $className): bool {
-            $path = "./../Core/$className.php";
-            if (file_exists($path)) {
-                require_once $path;
-                return true;
-            } else {
-                return false;
-            }
-        };
-
-        spl_autoload_register($autoloadController);
-        spl_autoload_register($autoloadModel);
-        spl_autoload_register($autoloadCore);
+        spl_autoload_register($autoloader);
     }
 }
+

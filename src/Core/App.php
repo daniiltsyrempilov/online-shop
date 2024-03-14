@@ -1,56 +1,93 @@
 <?php
 
+namespace Core;
+
+use Controller\CartController;
+use Controller\MainController;
+use Controller\ProductController;
+use Controller\UserController;
+#use Controller\OrderController;
+
 class App
 {
-    public function run()
+    private array $routes = [
+        '/registrate' => [
+            'GET' => [
+                'class' => UserController::class,
+                'method' => 'getRegistrate'
+            ],
+            'POST' => [
+                'class' => UserController::class,
+                'method' => 'postRegistrate'
+            ],
+        ],
+        '/login' => [
+            'GET' => [
+                'class' => UserController::class,
+                'method' => 'getLogin'
+            ],
+            'POST' => [
+                'class' => UserController::class,
+                'method' => 'postLogin'
+            ],
+        ],
+        '/logout' => [
+            'GET' => [
+                'class' => UserController::class,
+                'method' => 'logout'
+            ],
+        ],
+        '/main' => [
+            'GET' => [
+                'class' => MainController::class,
+                'method' => 'getMain'
+            ],
+            'POST' => [
+                'class' => ProductController::class,
+                'method' => 'postAddProduct'
+            ],
+        ],
+        '/add-product' => [
+            'GET' => [
+                'class' => ProductController::class,
+                'method' => 'getAddProduct'
+            ],
+        ],
+        '/rm-product' => [
+            'POST' => [
+                'class' => ProductController::class,
+                'method' => 'removeProduct'
+            ],
+        ],
+        '/cart' => [
+            'GET' => [
+                'class' => CartController::class,
+                'method' => 'getCart'
+            ],
+        ],
+    ];
+
+    public function run(): void
     {
         $uri = $_SERVER['REQUEST_URI'];
-        $method = $_SERVER['REQUEST_METHOD'];
+        if (isset($this->routes[$uri])) {
+            $routeMethods = $this->routes[$uri];
+            $routeMethod = $_SERVER['REQUEST_METHOD'];
 
-        if ($uri === '/registrate') {
-            $reg = new UserController();
-            if ($method === 'GET') {
-                $reg->getRegistrate();
-            } elseif ($method === 'POST') {
-                $reg->postRegistrate();
+            if (isset($routeMethods[$routeMethod])) {
+                $handler = $routeMethods[$routeMethod];
+                $class = $handler['class'];
+                $method = $handler['method'];
+
+                $obj = new $class;
+                $obj->$method($_POST);
             } else {
-                echo "$method не поддерживается $uri";
-            }
-        } elseif ($uri === '/login') {
-            $log = new UserController();
-            if ($method === 'GET') {
-                $log->getLogin();
-            } elseif ($method === 'POST') {
-                $log->postLogin();
-            } else {
-                echo "$method не поддерживается $uri";
-            }
-        } elseif ($uri === '/main') {
-            $main = new MainController();
-            if ($method === 'GET') {
-                $main->getMain();
-            } elseif ($method === 'POST') {
-                $addProd = new ProductController();
-                $addProd->postAddProduct();
-            } else {
-                echo "$method не поддерживается $method";
-            }
-        } elseif ($uri === '/add-product') {
-            $addProd = new ProductController();
-            if ($method === 'GET') {
-                $addProd->getAddProduct();
-            } else {
-                echo "$method не поддерживается $uri";
-            }
-        } elseif ($usi = '/cart') {
-            $cart = new CartController();
-            if ($method === 'GET') {
-                $cart->getCart();
-            } else {
-                echo "$method не поддерживается $uri";
+                echo "$routeMethod не поддерживается для адреса $uri!";
             }
         } else {
-            require_once "./../View/404.html";
+            require_once './../View/404.html';
         }
     }
+
 }
+

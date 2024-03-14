@@ -1,4 +1,8 @@
 <?php
+namespace Controller;
+
+
+use Model\User;
 
 class UserController
 {
@@ -161,5 +165,14 @@ class UserController
         }
 
         return $errors;
+    }
+
+    public function logout(): void
+    {
+        session_start();
+        if (session_status() === PHP_SESSION_ACTIVE){
+            session_destroy();
+        }
+        header('Location: /login');
     }
 }

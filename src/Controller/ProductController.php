@@ -1,9 +1,14 @@
 <?php
+namespace Controller;
+
+use Model\UserProduct;
+use Model\Product;
 
 class ProductController
 {
     private UserProduct $userProdModel;
     private Product $productModel;
+    #private Product $productModel;
 
     public function __construct()
     {
@@ -25,8 +30,6 @@ class ProductController
         }
         $errors = $this->validate($_POST);
 
-        $amount = $this->amount($_SESSION['user_id']);
-
         if (empty($errors)) {
             $productId = $_POST['product_id'];
             $quantity = $_POST['quantity'];
@@ -35,11 +38,41 @@ class ProductController
             if(empty($this->userProdModel->getOneByUserIdProductId($userId,$productId))) {
                 $this->userProdModel->create($userId, $productId, $quantity);
             } else {
-                $this->userProdModel->updateQuantity($userId, $productId, $quantity);
+                $this->userProdModel->updateQuantityPlus($userId, $productId, $quantity);
             }
+
+            $quantityProducts = $this->quantityProducts($_SESSION['user_id']);
+
+            require_once './../View/main.php';
         }
 
         header('Location: /main');
+    }
+
+    public function removeProduct(): void
+    {
+        session_start();
+        if (!isset($_SESSION['user_id'])) {
+            header("Location: /login");
+        }
+        $errors = $this->validate($_POST);
+
+        if (empty($errors)) {
+            $userId = $_SESSION['user_id'];
+            $productId = $_POST['product_id'];
+            $quantity = 1;
+
+            $userProduct = $this->userProdModel->getOneByUserIdProductId($userId,$productId);
+            if (!empty($userProduct)) {
+                if ($userProduct['quantity'] === 1) {
+                    $this->userProdModel->remove($userId, $productId, $quantity);
+                } elseif ($userProduct['quantity'] !== 0){
+                    $this->userProdModel->updateQuantityMinus($userId, $productId, $quantity);
+                }
+
+            }
+        }
+        header("Location: /main");
     }
 
     private function validate(array $data): array
@@ -69,7 +102,7 @@ class ProductController
         return $errors;
     }
 
-    public function amount($userId): array
+    public function quantityProducts($userId): array
     {
         $products = $this->productModel->getAll();
         $userProducts = $this->userProdModel->getAllByUserId($userId);

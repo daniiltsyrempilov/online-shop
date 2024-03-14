@@ -1,11 +1,12 @@
 <?php
-require_once './../Core/Autoloader.php';
+Use Core\Autoloader;
+Use Core\App;
 
-$autoloader = new Autoloader();
-$autoloader->registrate();
+require_once "./../Core/Autoloader.php";
+
+Autoloader::registrate(dirname(__DIR__));
 
 $app = new App();
 $app->run();
-
 
 
