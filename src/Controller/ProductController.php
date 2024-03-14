@@ -8,7 +8,7 @@ class ProductController
 {
     private UserProduct $userProdModel;
     private Product $productModel;
-    #private Product $productModel;
+
 
     public function __construct()
     {
@@ -32,7 +32,7 @@ class ProductController
 
         if (empty($errors)) {
             $productId = $_POST['product_id'];
-            $quantity = $_POST['quantity'];
+            $quantity = 1;
             $userId = $_SESSION['user_id'];
 
             if(empty($this->userProdModel->getOneByUserIdProductId($userId,$productId))) {
@@ -41,12 +41,10 @@ class ProductController
                 $this->userProdModel->updateQuantityPlus($userId, $productId, $quantity);
             }
 
-            $quantityProducts = $this->quantityProducts($_SESSION['user_id']);
 
-            require_once './../View/main.php';
         }
 
-        header('Location: /main');
+        header("Location: /main");
     }
 
     public function removeProduct(): void
@@ -102,22 +100,22 @@ class ProductController
         return $errors;
     }
 
-    public function quantityProducts($userId): array
-    {
-        $products = $this->productModel->getAll();
-        $userProducts = $this->userProdModel->getAllByUserId($userId);
-
-
-        foreach ($userProducts as $userProduct) {
-            $productOfCart = [];
-
-            foreach ($products as $product) {
-                if ($product['id'] === $userProduct['product_id']) {
-                    $productOfCart['quantity'] = $userProduct['quantity'];
-                }
-            }
-            $cart[] = $productOfCart;
-        }
-        return $cart;
-    }
+//    public function quantityProducts($userId): array
+//    {
+//        $products = $this->productModel->getAll();
+//        $userProducts = $this->userProdModel->getAllByUserId($userId);
+//
+//
+//        foreach ($userProducts as $userProduct) {
+//            $productOfCart = [];
+//
+//            foreach ($products as $product) {
+//                if ($product['id'] === $userProduct['product_id']) {
+//                    $productOfCart['quantity'] = $userProduct['quantity'];
+//                }
+//            }
+//            $cart[] = $productOfCart;
+//        }
+//        return $cart;
+//    }
 }

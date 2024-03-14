@@ -6,7 +6,7 @@ use Controller\CartController;
 use Controller\MainController;
 use Controller\ProductController;
 use Controller\UserController;
-#use Controller\OrderController;
+use Controller\OrderController;
 
 class App
 {
@@ -32,7 +32,7 @@ class App
             ],
         ],
         '/logout' => [
-            'GET' => [
+            'POST' => [
                 'class' => UserController::class,
                 'method' => 'logout'
             ],
@@ -63,6 +63,16 @@ class App
             'GET' => [
                 'class' => CartController::class,
                 'method' => 'getCart'
+            ],
+        ],
+        '/order' => [
+            'GET' => [
+                'class' => OrderController::class,
+                'method' => 'getOrder'
+            ],
+            'POST' => [
+                'class' => OrderController::class,
+                'method' => 'removeProduct'
             ],
         ],
     ];
