@@ -72,9 +72,15 @@ class App
             ],
             'POST' => [
                 'class' => OrderController::class,
-                'method' => 'removeProduct'
+                'method' => 'postOrder'
             ],
         ],
+        '/rere' => [
+            'GET' => [
+                'class' => OrderController::class,
+                'method' => 'rere'
+            ]
+        ]
     ];
 
     public function run(): void
