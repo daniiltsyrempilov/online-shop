@@ -55,15 +55,11 @@ class OrderController
 
             $this->orderModel->create($userId, $firstname, $lastname, $phoneNumder, $email, $address);
 
-            $userProducts = $this->userProductModel->getAll();
-
+            $userProducts = $this->userProductModel->getAll($userId);
+            $orderId = $this->orderModel->getOrderId();
             $price = $this->totalPrice($_SESSION['user_id']);
 
             foreach ($userProducts as $product) {
-                #$productId = $product['product_id'];
-                $quantity = $product['quantity'];
-                $orderId = $this->orderModel->getOrderId();
-                #$order = $this->orderModel->getByUserId($userId);
                 $this->orderProductModel->create($product['product_id'], $product['quantity'], $price, $orderId);
             }
 

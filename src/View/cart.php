@@ -14,10 +14,10 @@
 
     <?php foreach ($cart as $product): ?>
         <li class="catalog-item">
-            <p><?php echo $product['name'] ?></p>
-            <img src="<?php echo $product['img_url'] ?>" alt="Изображение товара">
+            <p><?php echo $product->getName ?></p>
+            <img src="<?php echo $product->getImage ?>" alt="Изображение товара">
             <!--                <p class="price">Цена за шт: --><?php //echo $product['price'] ?><!-- руб</p>-->
-            <p class="price">Количество: <?php echo $product['quantity'] ?> шт</p>
+            <p class="price">Количество: <?php echo $product->getQuntity ?> шт</p>
             <p class="price">Цена: <?php echo $product['sum'] ?> руб</p>
         </li>
 

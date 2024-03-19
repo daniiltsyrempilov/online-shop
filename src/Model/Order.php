@@ -11,14 +11,6 @@ class Order extends Model
 
     }
 
-    public function getByUserId(string $userId): mixed
-    {
-
-        $stmt = $this->pdo->prepare("SELECT * FROM orders WHERE user_id=:user_id");
-        $stmt->execute(['user_id' => $userId]);
-        return $stmt->fetch();
-    }
-
     public function getOrderId(): string
     {
         return $this->pdo->lastInsertId();

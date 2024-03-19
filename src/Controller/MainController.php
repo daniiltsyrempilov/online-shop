@@ -38,8 +38,8 @@ class MainController
         foreach ($userProducts as $userProduct) {
             $productOfCart = [];
             foreach ($products as $product) {
-                if ($product['id'] === $userProduct['product_id']) {
-                    $productOfCart['sum'] = $userProduct['quantity'] * $product['price'];
+                if ($product->getId === $userProduct->getProductId) {
+                    $productOfCart['sum'] = $userProduct->getQunatity * $product->getPrice;
                     $totalPrice += $productOfCart['sum'];
                 }
             }

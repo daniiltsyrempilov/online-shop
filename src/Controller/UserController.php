@@ -1,7 +1,7 @@
 <?php
 namespace Controller;
 
-
+use Entity\UserEntity;
 use Model\User;
 
 class UserController
@@ -60,7 +60,7 @@ class UserController
                     require_once './../Model/User.php';
                     $userModel = new User();
 
-                    if (!empty($userModel->getOneByEmail($_POST))) {
+                    if (!empty($userModel->getOneByEmail($email))) {
                         $errors['email'] = 'Пользователь с таким email уже сущетсвует';
                     }
                 }
@@ -97,22 +97,23 @@ class UserController
         require_once './../View/login.php';
     }
 
-    public function postLogin(): void
+    public function postLogin(array $data): void
     {
         $errors = $this->validateLog($_POST);
+        $email = $data['email'];
 
         if(empty($errors)) {
             require_once './../Model/User.php';
-            $user = $this->userModel->getOneByEmail($_POST);
+            $user = $this->userModel->getOneByEmail($email);
 
             $password = $_POST['password'];
 
             if(empty($user)) {
                 $errors['email'] = 'Email or password incorrect';
             } else {
-                if(password_verify($password, $user['password'])) {
+                if(password_verify($password, $user->getPassword())) {
                     session_start();
-                    $_SESSION['user_id'] = $user['id'];
+                    $_SESSION['user_id'] = $user->getId();
                     header('Location: /main');
                 } else {
                     $errors['password'] = 'Email or password incorrect';

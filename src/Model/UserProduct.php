@@ -1,6 +1,10 @@
 <?php
 namespace Model;
 
+use Entity\ProductEntity;
+use Entity\UserEntity;
+use Entity\UserProductEntity;
+
 class UserProduct extends Model
 {
     public function create(string $userId, string $productId, string $quantity): void
@@ -15,20 +19,55 @@ class UserProduct extends Model
         $stmt->execute(['user_id'=>$userId, 'product_id'=>$productId, 'quantity'=>$quantity]);
     }
 
-    public function getOneByUserIdProductId($userId, $productId): array
+    public function getOneByUserIdProductId($userId, $productId): UserProductEntity|null
     {
-        $stmt = $this->pdo->prepare("SELECT user_id, product_id FROM user_products WHERE user_id = :user_id AND product_id = :product_id");
-        $stmt->execute(['user_id'=>$userId, 'product_id'=>$productId]);
+        #$stmt = $this->pdo->prepare("SELECT user_id, product_id FROM user_products WHERE user_id = :user_id AND product_id = :product_id");
+
+        $stmt = $this->pdo->prepare("SELECT up.id AS id, u.id AS user_id, u.name AS user_name, u.email, u.password, 
+        p.id AS product_id, p.name AS product_name, p.price, p.description, p.img_url, up.quantity 
+        FROM user_products up
+        JOIN users u ON up.user_id = u.id
+        JOIN products p ON up.product_id = p.id
+        WHERE u.id = :user_id AND p.id = :product_id");
+        $stmt->execute(['user_id' => $userId, 'product_id' => $productId]);
+
         $userProduct = $stmt->fetch();
 
-        return $userProduct;
+        if (empty($userProduct)) {
+            return null;
+        }
+
+        #return new UserProductEntity($userProduct['id'], $userProduct['user_id'], $userProduct['product_id'], $userProduct['quantity'],);
+        return new UserProductEntity($userProduct['id'],
+            new UserEntity($userProduct['user_id'],$userProduct['user_name'],$userProduct['email'],$userProduct['password']),
+            new ProductEntity($userProduct['product_id'],$userProduct['product_name'],$userProduct['description'],$userProduct['price'],$userProduct['img_url']),
+            $userProduct['quantity']);
     }
 
-    public function getAllByUserId($userId): array
+    public function getAllByUserId($userId): UserProductEntity|null
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM user_products WHERE user_id = :user_id");
+        #$stmt = $this->pdo->prepare("SELECT * FROM user_products WHERE user_id = :user_id");
+
+        $stmt = $this->pdo->prepare("SELECT up.id AS id, u.id AS user_id, u.name AS user_name, u.email, u.password, 
+        p.id AS product_id, p.name AS product_name, p.price, p.description, p.img_url, up.quantity 
+        FROM user_products up
+        JOIN users u ON up.user_id = u.id
+        JOIN products p ON up.product_id = p.id
+        WHERE u.id = :user_id;");
+
         $stmt->execute(['user_id' => $userId]);
-        return $stmt->fetchAll();
+
+        $userProduct = $stmt->fetchAll();
+
+        if (empty($userProduct)) {
+            return null;
+        }
+
+        #return new UserProductEntity($userProduct['id'], $userProduct['user_id'], $userProduct['product_id'], $userProduct['quantity']);
+        return new UserProductEntity($userProduct['id'],
+            new UserEntity($userProduct['user_id'],$userProduct['user_name'],$userProduct['email'],$userProduct['password']),
+            new ProductEntity($userProduct['product_id'],$userProduct['product_name'],$userProduct['description'],$userProduct['price'],$userProduct['img_url']),
+            $userProduct['quantity']);
     }
 
     public function remove(string $userId, string $productId): void
@@ -43,9 +82,29 @@ class UserProduct extends Model
         $stmt->execute(['user_id'=>$userId, 'product_id'=>$productId, 'quantity'=>$quantity]);
     }
 
-    public function getAll(): array
+    public function getAll($userId): UserProductEntity|null
     {
-        $stmt = $this->pdo->query('SELECT * FROM user_products');
-        return $stmt->fetchAll();
+        #$stmt = $this->pdo->query('SELECT * FROM user_products WHERE user_id = :user_id');
+
+        $stmt = $this->pdo->prepare("SELECT up.id AS id, u.id AS user_id, u.name AS user_name, u.email, u.password, 
+        p.id AS product_id, p.name AS product_name, p.price, p.description, p.img_url, up.quantity 
+        FROM user_products up
+        JOIN users u ON up.user_id = u.id
+        JOIN products p ON up.product_id = p.id
+        WHERE u.id = :user_id;");
+
+        $stmt->execute(['user_id' => $userId]);
+
+        $userProduct = $stmt->fetchAll();
+
+        if (empty($userProduct)) {
+            return null;
+        }
+
+        #return new UserProductEntity($userProduct['id'], $userProduct['user_id'], $userProduct['product_id'], $userProduct['quantity'],);
+        return new UserProductEntity($userProduct['id'],
+            new UserEntity($userProduct['user_id'],$userProduct['user_name'],$userProduct['email'],$userProduct['password']),
+            new ProductEntity($userProduct['product_id'],$userProduct['product_name'],$userProduct['description'],$userProduct['price'],$userProduct['img_url']),
+            $userProduct['quantity']);
     }
 }

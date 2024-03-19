@@ -1,6 +1,8 @@
 <?php
 namespace Model;
 
+use Entity\UserEntity;
+
 class User extends Model
 {
     public function setData(array $post): bool
@@ -14,12 +16,16 @@ class User extends Model
         return $statement->execute(['name' => $name, 'email' => $email, 'password' => $password]);
     }
 
-    public function getOneByEmail(array $val): mixed
+    public function getOneByEmail(string $email): UserEntity|null
     {
-        $email = $val['email'];
-
         $statement = $this->pdo->prepare("SELECT * FROM users WHERE email = :email");
         $statement->execute(['email' => $email]);
-        return $statement->fetch();
+        $user =  $statement->fetch();
+
+        if (empty($user)){
+            return null;
+        }
+
+        return new UserEntity($user['id'], $user['name'], $user['email'], $user['password']);
     }
 }
